@@ -242,7 +242,7 @@
 
       // Choose API base: localhost in dev; in prod (Vercel or any non-local host), call Render backend
       const isLocal = ["localhost","127.0.0.1"].includes(location.hostname || "");
-      const API_BASE = isLocal ? "http://localhost:3001" : "https://magnetx-backend.onrender.com";
+      const API_BASE = isLocal ? "http://localhost:3001" : "https://magnetx-dao-1.onrender.com";
 
       try{
         const resp = await fetch(`${API_BASE}/api/forms/apply`, {

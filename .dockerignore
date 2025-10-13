@@ -1,0 +1,20 @@
+# Ignore VCS and local artifacts
+.git
+.gitignore
+
+# Node modules and logs
+**/node_modules
+npm-debug.log*
+yarn-error.log*
+
+# Editor and OS files
+.DS_Store
+
+# Local databases (never needed in image)
+**/*.sqlite
+**/*.db
+**/data.sqlite*
+
+# Frontend artifacts not needed for the backend image
+*.md
+render.yaml

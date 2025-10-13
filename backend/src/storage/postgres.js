@@ -4,7 +4,7 @@ const { getPool, initPg } = require("../pg");
 function mapApplyPayload(payload) {
   return {
     full_name: payload.fullName || null,
-    x_profile_link: payload["x profile link"] || null,
+    x_profile_link: (payload["x profile link"] || payload.xProfile) || null,
     region: payload.region || null,
     phone: payload.phone || null,
     niche: payload.niche || null,
