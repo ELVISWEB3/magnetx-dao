@@ -220,8 +220,10 @@
     });
 
     // Form submission
-    form.addEventListener("submit", async evt=>{
+    form.addEventListener("submit", async (evt)=>{
       evt.preventDefault();
+
+      // Basic client-side validation (unchanged)
       const name = document.getElementById("fullName").value.trim();
       const region = document.getElementById("region").value.trim();
       const phone = document.getElementById("phone").value.trim();
@@ -235,23 +237,29 @@
         return;
       }
 
-      const formData = { name: niche, Region: region, phone: phone, skills, category, reason };
+      // Build payload from the form as-is (preserves existing field names)
+      const payload = Object.fromEntries(new FormData(form).entries());
 
-      try {
-        const response = await fetch(`${BASE_URL}/post-endpoint`, {
+      // Choose API base: localhost in dev; in prod (Vercel or any non-local host), call Render backend
+      const isLocal = ["localhost","127.0.0.1"].includes(location.hostname || "");
+      const API_BASE = isLocal ? "http://localhost:3001" : "https://magnetx-backend.onrender.com";
+
+      try{
+        const resp = await fetch(`${API_BASE}/api/forms/apply`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(payload)
         });
-
-        if(!response.ok) throw new Error("Failed to submit form");
-
+        if(!resp.ok){
+          throw new Error(`Request failed with ${resp.status}`);
+        }
+        // Success UI
         form.parentElement.classList.add("hidden");
         afterSubmit.classList.remove("hidden");
         window.scrollTo({top:0, behavior:"smooth"});
-      } catch(err) {
+      }catch(err){
         console.error(err);
-        alert("There was an error submitting your form. Please try again.");
+        alert("Submission failed. Please try again.");
       }
     });
 

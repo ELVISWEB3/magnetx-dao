@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: magnetx-backend
+    env: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: magnetx-db
+          property: connectionString
+    healthCheckPath: /api/health
+
+databases:
+  - name: magnetx-db
+    plan: free

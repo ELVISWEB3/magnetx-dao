@@ -1,0 +1,10 @@
+node_modules
+.env
+*.sqlite
+*.db
+data.sqlite
+# Ignore SQLite WAL/SHM files
+*.sqlite-*
+data.sqlite-*
+npm-debug.log*
+yarn-error.log*
