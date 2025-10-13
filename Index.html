@@ -102,11 +102,11 @@
           <label for="fullName">Full Name</label>
           <input id="fullName" name="fullName" type="text" placeholder="Jane Doe" required />
         </div>
-               <div>
-          <label for="profile link">X profile Link</label>
-          <input id="x profile link" name="x profile link" type="text" placeholder="https://x.com/elizamarrk" required />
-        </div>
 
+        <div>
+          <label for="xProfile">X profile Link</label>
+          <input id="xProfile" name="xProfile" type="text" placeholder="https://x.com/elizamarrk" required />
+        </div>
 
         <div>
           <label for="region">Region / Country</label>
@@ -121,27 +121,14 @@
         <div>
           <label for="niche">Your Web3 Niche</label>
           <select id="niche" name="niche" required>
-            <option value="" disabled selected hidden>Choose a niche…</option>
-            <option>DeFi</option>
-            <option>NFTs</option>
-            <option>DAOs</option>
-            <option>Trading</option>
-            <option>Community</option>
-            <option>Development</option>
-            <option>Other</option>
+            <option value="" disabled selected>Choose a niche…</option>
           </select>
         </div>
 
         <div>
           <label for="skills">Your Skills</label>
           <select id="skills" name="skills" required>
-            <option value="" disabled selected hidden>Choose a skill…</option>
-            <option>Graphic Design</option>
-            <option>Content Writing</option>
-            <option>Video Editing</option>
-            <option>Social Media Managment</option>
-            <option>Communication Skills</option>
-            <option>Other</option>
+            <option value="" disabled selected>Choose a skill…</option>
           </select>
           <input type="text" id="otherSkill" name="otherSkill" placeholder="Enter your skill" class="hidden" />
         </div>
@@ -149,9 +136,7 @@
         <div>
           <label for="category">Category</label>
           <select id="category" name="category" required>
-            <option value="" disabled selected hidden>Select a category…</option>
-            <option>Airdrop</option>
-            <option>Job Hunting</option>
+            <option value="" disabled selected>Select a category…</option>
           </select>
         </div>
 
@@ -187,11 +172,41 @@
   </main>
 
   <script>
+    const BASE_URL = "https://your-backend-url.com"; // <-- Replace with your backend
+
     const form = document.getElementById("magnetForm");
     const afterSubmit = document.getElementById("afterSubmit");
     const returnBtn = document.getElementById("returnBtn");
     const skillsDropdown = document.getElementById("skills");
     const otherSkillInput = document.getElementById("otherSkill");
+
+    // Populate dropdowns dynamically
+    async function populateDropdown(id, endpoint) {
+      try {
+        const res = await fetch(`${BASE_URL}/${endpoint}`);
+        if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+        const data = await res.json();
+        const select = document.getElementById(id);
+
+        // Keep placeholder as first option
+        const placeholder = select.querySelector("option");
+        select.innerHTML = "";
+        select.appendChild(placeholder);
+
+        Object.values(data).forEach(value => {
+          const opt = document.createElement("option");
+          opt.value = value;
+          opt.text = value;
+          select.add(opt);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    populateDropdown("niche", "community");
+    populateDropdown("skills", "skill");
+    populateDropdown("category", "category");
 
     // Show input when "Other" skill is selected
     skillsDropdown.addEventListener("change", ()=>{
@@ -204,7 +219,8 @@
       }
     });
 
-    form.addEventListener("submit", evt=>{
+    // Form submission
+    form.addEventListener("submit", async evt=>{
       evt.preventDefault();
       const name = document.getElementById("fullName").value.trim();
       const region = document.getElementById("region").value.trim();
@@ -219,11 +235,24 @@
         return;
       }
 
-      // Optional: store form data in backend / Airtable / Google Forms
+      const formData = { name: niche, Region: region, phone: phone, skills, category, reason };
 
-      form.parentElement.classList.add("hidden");
-      afterSubmit.classList.remove("hidden");
-      window.scrollTo({top:0, behavior:"smooth"});
+      try {
+        const response = await fetch(`${BASE_URL}/post-endpoint`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
+        });
+
+        if(!response.ok) throw new Error("Failed to submit form");
+
+        form.parentElement.classList.add("hidden");
+        afterSubmit.classList.remove("hidden");
+        window.scrollTo({top:0, behavior:"smooth"});
+      } catch(err) {
+        console.error(err);
+        alert("There was an error submitting your form. Please try again.");
+      }
     });
 
     returnBtn.addEventListener("click", ()=>{
