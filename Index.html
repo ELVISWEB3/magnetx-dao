@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MagnetX — Join the Community</title>
+  <style>
+    :root{
+      --accent:#d6336c;
+      --card-bg: rgba(255,255,255,0.2);
+      --text-dark:#1a1a1a;
+      --text-muted:#444;
+      --glass: rgba(255,255,255,0.15);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0; min-height:100vh;
+      display:flex; justify-content:center; align-items:flex-start;
+      background: linear-gradient(135deg, #ffe6ea, #f3b1b9);
+      position: relative; padding:60px 20px;
+      color: var(--text-dark);
+    }
+
+    body::before{
+      content:""; position: fixed; top:0; left:0; width:100%; height:100%;
+      pointer-events:none;
+      background:url('https://www.transparenttextures.com/patterns/soft-wallpaper.png') repeat;
+      opacity:0.05; z-index:0;
+    }
+
+    .container{
+      position:relative; z-index:1;
+      max-width:700px; width:100%;
+      display:grid; gap:40px;
+    }
+
+    header h1{
+      margin:0 0 16px 0; font-size:2rem;
+    }
+    header p{
+      margin:0 0 24px 0; color:var(--text-muted); line-height:1.6;
+    }
+    .btn{
+      background:var(--accent); color:white;
+      padding:14px 20px; border-radius:12px; border:none;
+      font-weight:600; cursor:pointer; text-decoration:none;
+      display:inline-block; font-size:1rem;
+    }
+
+    .card{
+      background: var(--card-bg); padding:28px;
+      border-radius:16px; backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,0.2);
+    }
+
+    form{display:flex; flex-direction:column; gap:18px;}
+    label{font-weight:500;}
+    input, select, textarea{
+      width:100%; padding:12px;
+      border-radius:10px; border:1px solid rgba(0,0,0,0.1);
+      background:var(--glass); font-size:0.95rem;
+    }
+    input:focus, select:focus, textarea:focus{
+      outline:none; box-shadow:0 0 0 4px rgba(214,51,108,0.2);
+    }
+
+    .hidden{display:none;}
+    .success{
+      padding:16px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.3);
+      border:1px solid rgba(255,255,255,0.2);
+      color: var(--text-dark);
+    }
+    .actions{display:flex; gap:12px; margin-top:12px;}
+
+    footer{
+      margin-top:40px; text-align:center; color:var(--text-muted);
+      font-size:0.85rem;
+    }
+
+    @media(max-width:600px){.container{padding:0 12px;}}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Welcome to MagnetX 🧲</h1>
+      <p>A home for builders, dreamers, and doers shaping Web3. Connect with projects, investors, and like-minded creators.</p>
+      <a class="btn" href="#apply">Join MagnetX today</a>
+    </header>
+
+    <!-- Form Card -->
+    <div class="card" id="apply">
+      <h2 style="margin-top:0;">Apply to Join</h2>
+      <p style="color:var(--text-muted); margin-bottom:18px;">Complete the form to request access to our WhatsApp community.</p>
+      
+      <form id="magnetForm" autocomplete="on" novalidate>
+        <div>
+          <label for="fullName">Full Name</label>
+          <input id="fullName" name="fullName" type="text" placeholder="Jane Doe" required />
+        </div>
+               <div>
+          <label for="profile link">X profile Link</label>
+          <input id="x profile link" name="x profile link" type="text" placeholder="https://x.com/elizamarrk" required />
+        </div>
+
+
+        <div>
+          <label for="region">Region / Country</label>
+          <input id="region" name="region" type="text" placeholder="Lagos, Nigeria" required />
+        </div>
+
+        <div>
+          <label for="phone">Phone (WhatsApp number)</label>
+          <input id="phone" name="phone" type="tel" placeholder="+234 801 234 5678" required />
+        </div>
+
+        <div>
+          <label for="niche">Your Web3 Niche</label>
+          <select id="niche" name="niche" required>
+            <option value="" disabled selected hidden>Choose a niche…</option>
+            <option>DeFi</option>
+            <option>NFTs</option>
+            <option>DAOs</option>
+            <option>Trading</option>
+            <option>Community</option>
+            <option>Development</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="skills">Your Skills</label>
+          <select id="skills" name="skills" required>
+            <option value="" disabled selected hidden>Choose a skill…</option>
+            <option>Graphic Design</option>
+            <option>Content Writing</option>
+            <option>Video Editing</option>
+            <option>Social Media Managment</option>
+            <option>Communication Skills</option>
+            <option>Other</option>
+          </select>
+          <input type="text" id="otherSkill" name="otherSkill" placeholder="Enter your skill" class="hidden" />
+        </div>
+
+        <div>
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="" disabled selected hidden>Select a category…</option>
+            <option>Airdrop</option>
+            <option>Job Hunting</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="followers">Follower Count (X) </label>
+          <input id="followers" name="followers" type="text" placeholder="e.g., 3.2k / 500" />
+        </div>
+
+        <div>
+          <label for="reason">Why do you want to join MagnetX?</label>
+          <textarea id="reason" name="reason" rows="4" placeholder="Share your reason in a few sentences" maxlength="600" required></textarea>
+        </div>
+
+        <button type="submit" class="btn">Submit Application</button>
+      </form>
+    </div>
+
+    <!-- Success Card -->
+    <div class="card hidden" id="afterSubmit">
+      <div class="success">
+        <strong>Thanks! Your application has been recorded.</strong>
+        <p style="margin-top:8px; color:var(--text-muted)">Click below to join the MagnetX WhatsApp community or return to edit your application.</p>
+        <div class="actions">
+          <a class="btn" id="whatsappBtn" href="https://chat.whatsapp.com/BgepHZJm2DRIfLKpVOPDP2?mode=wwt" target="_blank">Join WhatsApp Community</a>
+          <button class="btn" id="returnBtn" style="background:#fff;color:var(--accent);border:1px solid var(--accent);">Return to Form</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Built with care by MagnetX · <a href="#" style="color:var(--text-muted); text-decoration:none;">Community rules & privacy</a></p>
+    </footer>
+  </main>
+
+  <script>
+    const form = document.getElementById("magnetForm");
+    const afterSubmit = document.getElementById("afterSubmit");
+    const returnBtn = document.getElementById("returnBtn");
+    const skillsDropdown = document.getElementById("skills");
+    const otherSkillInput = document.getElementById("otherSkill");
+
+    // Show input when "Other" skill is selected
+    skillsDropdown.addEventListener("change", ()=>{
+      if(skillsDropdown.value === "Other"){
+        otherSkillInput.classList.remove("hidden");
+        otherSkillInput.required = true;
+      } else {
+        otherSkillInput.classList.add("hidden");
+        otherSkillInput.required = false;
+      }
+    });
+
+    form.addEventListener("submit", evt=>{
+      evt.preventDefault();
+      const name = document.getElementById("fullName").value.trim();
+      const region = document.getElementById("region").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const niche = document.getElementById("niche").value;
+      const skills = skillsDropdown.value === "Other" ? otherSkillInput.value.trim() : skillsDropdown.value;
+      const category = document.getElementById("category").value;
+      const reason = document.getElementById("reason").value.trim();
+
+      if(!name || !region || !phone || !niche || !skills || !category || !reason){
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      // Optional: store form data in backend / Airtable / Google Forms
+
+      form.parentElement.classList.add("hidden");
+      afterSubmit.classList.remove("hidden");
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    returnBtn.addEventListener("click", ()=>{
+      afterSubmit.classList.add("hidden");
+      form.parentElement.classList.remove("hidden");
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+  </script>
+</body>
+</html>
