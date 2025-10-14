@@ -240,8 +240,12 @@ const API_BASE = isLocal ? "http://localhost:3001" : "https://magnetx-backend.ve
 
       // Build payload from the form as-is (preserves existing field names)
       const payload = Object.fromEntries(new FormData(form).entries());
+      // Normalize dropdowns: if "Other" is selected for skills, send the typed value as skills, too
+      if (payload.skills === "Other" && payload.otherSkill) {
+        payload.skills = payload.otherSkill;
+      }
 
-      // Choose API base: localhost in dev; in prod (Vercel or any non-local host), call Render backend
+      // Choose API base: localhost in dev; in prod (Vercel or any non-local host), call backend
 
       try{
         const resp = await fetch(`${API_BASE}/api/forms/apply`, {
