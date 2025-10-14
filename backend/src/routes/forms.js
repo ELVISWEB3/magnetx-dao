@@ -1,7 +1,8 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const storage = require("../storage");
+const storage = require("../storage/prisma");
+const { enrichFromXProfileLink } = require("../services/x_profile");
 
 function sanitizeFormName(raw) {
   return String(raw || "")
@@ -19,22 +20,40 @@ router.post("/:formName", async (req, res) => {
     const ua = req.get("user-agent") || null;
     const ip = (req.headers["x-forwarded-for"] || req.ip || "").toString().split(",")[0].trim() || null;
 
+    // Optional enrichment for X profile link (fail-soft)
+    try {
+      const xLink = payload.xProfile || payload["x profile link"]; // support both field names
+      if (xLink) {
+        const info = await enrichFromXProfileLink(xLink);
+        if (info) {
+          if (typeof info.followers_count === "number") {
+            payload.followers = String(info.followers_count);
+          }
+          if (info.profile_image_url) {
+            payload.x_profile_avatar = info.profile_image_url;
+          }
+          if (info.username) {
+            payload.x_profile_username = info.username;
+          }
+        }
+      }
+    } catch (_) {
+      // ignore enrichment errors
+    }
+
     const result = await storage.storeSubmission(formName, payload, ua, ip);
 
     return res.status(201).json({ id: result.id, form: formName, created_at: result.created_at });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error(err);
     return res.status(500).json({ error: "failed_to_store_submission" });
   }
 });
 
-// List known forms
+// List known forms (minimal)
 router.get("/", async (req, res) => {
-  // Pull distinct forms from the generic table via a small query using storage
   try {
     const submissions = await storage.listSubmissions("apply", 1, 0);
-    // This endpoint is simple; for multi-form support, extend storage with a 'listForms' method
     res.json({ forms: submissions.length ? ["apply"] : [] });
   } catch (e) {
     res.json({ forms: [] });
@@ -53,7 +72,6 @@ router.get("/:formName/submissions", async (req, res) => {
 
     res.json({ page, limit, submissions });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error(err);
     res.status(500).json({ error: "failed_to_list_submissions" });
   }

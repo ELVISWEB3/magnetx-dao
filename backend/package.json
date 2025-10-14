@@ -1,22 +1,30 @@
 {
   "name": "magnetx-backend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Backend API for storing HTML form submissions for MagnetX",
+  "description": "Production API for MagnetX form submissions (Express + Prisma + Supabase)",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "build": "echo \"No build step\" && prisma migrate deploy",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev --name init"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
-    "better-sqlite3": "^12.4.1",
+    "@prisma/client": "^5.18.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.1.0",
-    "helmet": "^8.1.0",
-    "pg": "^8.16.3"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.18.0"
   }
 }
