@@ -38,15 +38,18 @@ app.use(limiter);
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 // Dropdown data endpoints (static for now)
-app.get("/api/community", (req, res) => {
-  res.json({ "1": "DEFI", "2": "NFTs", "3": "Traffic" });
-});
-app.get("/api/skill", (req, res) => {
-  res.json({ "1": "Communication", "2": "Social Media  Management", "3": "Content writing" });
-});
-app.get("/api/category", (req, res) => {
-  res.json({ "1": "Airdrop", "2": "Etc", "3": "Etc" });
-});
+// Expose both /api/* and non-/api endpoints to be compatible with various hosting setups
+const communityPayload = { "1": "DEFI", "2": "NFTs", "3": "Traffic" };
+const skillPayload = { "1": "Communication", "2": "Social Media  Management", "3": "Content writing" };
+const categoryPayload = { "1": "Airdrop", "2": "Etc", "3": "Etc" };
+
+app.get("/community", (req, res) => res.json(communityPayload));
+app.get("/skill", (req, res) => res.json(skillPayload));
+app.get("/category", (req, res) => res.json(categoryPayload));
+
+app.get("/api/community", (req, res) => res.json(communityPayload));
+app.get("/api/skill", (req, res) => res.json(skillPayload));
+app.get("/api/category", (req, res) => res.json(categoryPayload));
 
 // Forms routes
 app.use("/api/forms", formsRouter);
