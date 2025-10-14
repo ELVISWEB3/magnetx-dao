@@ -1,0 +1,5 @@
+/* Minimal globals retained */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin:0; }
+a { color: var(--accent); }
