@@ -90,6 +90,9 @@
       <h1>Welcome to MagnetX 🧲</h1>
       <p>A home for builders, dreamers, and doers shaping Web3. Connect with projects, investors, and like-minded creators.</p>
       <a class="btn" href="#apply">Join MagnetX today</a>
+      <div style="margin-top:8px;">
+        <a href="https://t.me/MagnetXDao" target="_blank" rel="noopener" style="color:var(--text-muted); text-decoration:none;">Telegram: @MagnetXDao</a>
+      </div>
     </header>
 
     <!-- Form Card -->
@@ -140,10 +143,6 @@
           </select>
         </div>
 
-        <div>
-          <label for="followers">Follower Count (X) </label>
-          <input id="followers" name="followers" type="text" placeholder="e.g., 3.2k / 500" />
-        </div>
 
         <div>
           <label for="reason">Why do you want to join MagnetX?</label>
@@ -172,7 +171,8 @@
   </main>
 
   <script>
-    const BASE_URL = "https://your-backend-url.com"; // <-- Replace with your backend
+const isLocal = ["localhost","127.0.0.1"].includes(location.hostname || "");
+const API_BASE = isLocal ? "http://localhost:3001" : "https://magnetx-backend.vercel.app";
 
     const form = document.getElementById("magnetForm");
     const afterSubmit = document.getElementById("afterSubmit");
@@ -183,7 +183,8 @@
     // Populate dropdowns dynamically
     async function populateDropdown(id, endpoint) {
       try {
-        const res = await fetch(`${BASE_URL}/${endpoint}`);
+        // Call non-/api endpoints for broader compatibility with serverless rewrites
+        const res = await fetch(`${API_BASE}/${endpoint}`);
         if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
         const data = await res.json();
         const select = document.getElementById(id);
@@ -241,8 +242,6 @@
       const payload = Object.fromEntries(new FormData(form).entries());
 
       // Choose API base: localhost in dev; in prod (Vercel or any non-local host), call Render backend
-      const isLocal = ["localhost","127.0.0.1"].includes(location.hostname || "");
-      const API_BASE = isLocal ? "http://localhost:3001" : "https://magnetx-dao-1.onrender.com";
 
       try{
         const resp = await fetch(`${API_BASE}/api/forms/apply`, {
