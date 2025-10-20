@@ -19,7 +19,14 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(helmet());
 
 // CORS (production only, no localhost)
-const corsOrigin = process.env.CORS_ORIGIN || "*"; // you can restrict later by setting env
+
+const defaultOrigins = [
+  'https://cre8withmagnetx.xyz',
+  'https://magnet-x.vercel.app',
+  'https://magnetx.xyz',
+  'https://manetx-dao-g2rq.vercel.app',
+];
+const corsOrigin = process.env.CORS_ORIGIN || defaultOrigins.join(',');
 const corsOptions = {
   origin: corsOrigin === "*" ? true : corsOrigin.split(",").map((s) => s.trim()),
 };

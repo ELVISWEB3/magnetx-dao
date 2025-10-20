@@ -13,12 +13,13 @@ export interface FormState {
   skills: string
   otherSkill: string
   category: string
-  followers: string
+  nominee1: string
+  nominee2: string
   reason: string
 }
 
 const initialState: FormState = {
-  fullName: '', xProfile: '', region: '', phone: '', niche: '', skills: '', otherSkill: '', category: '', followers: '', reason: ''
+  fullName: '', xProfile: '', region: '', phone: '', niche: '', skills: '', otherSkill: '', category: '', nominee1: '', nominee2: '', reason: ''
 }
 
 const isLocalHost = (host: string) => ['localhost', '127.0.0.1'].includes(host)
@@ -66,7 +67,7 @@ const CommunityApplyForm: React.FC = () => {
     update(name as keyof FormState, value as any)
   }
   function validate() {
-    const required: (keyof FormState)[] = ['fullName','xProfile','region','phone','niche','skills','category','reason']
+  const required: (keyof FormState)[] = ['fullName','xProfile','region','phone','niche','skills','category','reason','nominee1','nominee2']
     return required.every(k => form[k]) && !(form.skills === 'Other' && !form.otherSkill)
   }
   async function handleSubmit(e: React.FormEvent) {
@@ -74,7 +75,7 @@ const CommunityApplyForm: React.FC = () => {
     if (!validate()) { alert('Please fill in all required fields.'); return }
     setLoading(true); setError(null)
     try {
-      const payload = { ...form, skills: form.skills === 'Other' ? form.otherSkill : form.skills }
+  const payload = { ...form, skills: form.skills === 'Other' ? form.otherSkill : form.skills }
       await http.post('/magnetx/community/apply', payload)
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -111,7 +112,10 @@ const CommunityApplyForm: React.FC = () => {
               )}
             </div>
             <SelectField label="Category" name="category" value={form.category} onChange={handleChange} placeholder="Select a category…" options={categories} required />
-            <Field label="Follower Count (X)" name="followers" value={form.followers} onChange={handleChange} placeholder="e.g., 3.2k / 500" />
+            <div className="mx-field-group">
+              <Field label="Nominate Friend #1 (X profile link)" name="nominee1" value={form.nominee1} onChange={handleChange} placeholder="https://x.com/friend1" required />
+              <Field label="Nominate Friend #2 (X profile link)" name="nominee2" value={form.nominee2} onChange={handleChange} placeholder="https://x.com/friend2" required />
+            </div>
             <Field as="textarea" label="Why do you want to join MagnetX?" name="reason" value={form.reason} onChange={handleChange} placeholder="Share your reason in a few sentences" required textareaProps={{ rows: 4, maxLength: 600 }} />
             <button type="submit" className="btn" disabled={loading}>{loading ? 'Submitting…' : 'Submit Application'}</button>
             {error && <p className="mx-error">{error}</p>}
