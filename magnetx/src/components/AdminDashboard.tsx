@@ -281,7 +281,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
               {selected.niche && <DT label="Niche" value={selected.niche} />}
               {selected.skills && <DT label="Skills" value={selected.skills} />}
               {selected.category && <DT label="Category" value={selected.category} />}
-              {selected.followers && <DT label="Followers" value={selected.followers} />}
             {selected.nominee1 && <DT label="Nominee #1" value={<a href={selected.nominee1} target="_blank" rel="noreferrer noopener">{selected.nominee1}</a>} />}
             {selected.nominee2 && <DT label="Nominee #2" value={<a href={selected.nominee2} target="_blank" rel="noreferrer noopener">{selected.nominee2}</a>} />}
               {selected.reason && <DT label="Reason" value={selected.reason} />}
