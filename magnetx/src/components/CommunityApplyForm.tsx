@@ -22,10 +22,7 @@ const initialState: FormState = {
   fullName: '', xProfile: '', region: '', phone: '', niche: '', skills: '', otherSkill: '', category: '', nominee1: '', nominee2: '', reason: ''
 }
 
-const isLocalHost = (host: string) => ['localhost', '127.0.0.1'].includes(host)
-const DAO_BASE = typeof window !== 'undefined' && isLocalHost(window.location.hostname)
-  ? 'http://localhost:3001'
-  : 'https://magnetx-dao-1.onrender.com'
+// Backend base is handled by services/http.ts via VITE_API_URL or sensible defaults
 
 const CommunityApplyForm: React.FC = () => {
   const [form, setForm] = useState<FormState>(initialState)
@@ -44,10 +41,9 @@ const CommunityApplyForm: React.FC = () => {
     }
     async function load(endpoint: keyof typeof fallback, setter: (vals: string[]) => void) {
       try {
-        const res = await fetch(`${DAO_BASE}/api/${endpoint}`)
-        if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`)
-        const data: OptionSet | string[] = await res.json()
-        const values = Array.isArray(data) ? data : Object.values(data)
+        const res = await http.get<OptionSet | string[]>(`/${endpoint}`)
+        const data = res.data
+        const values = Array.isArray(data) ? data : Object.values(data as OptionSet)
         setter(values.length ? values : fallback[endpoint])
       } catch (e) {
         console.warn(`Using fallback for ${endpoint}`, e)
@@ -75,7 +71,7 @@ const CommunityApplyForm: React.FC = () => {
     if (!validate()) { alert('Please fill in all required fields.'); return }
     setLoading(true); setError(null)
     try {
-  const payload = { ...form, skills: form.skills === 'Other' ? form.otherSkill : form.skills }
+      const payload = { ...form, skills: form.skills === 'Other' ? form.otherSkill : form.skills }
       await http.post('/magnetx/community/apply', payload)
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
