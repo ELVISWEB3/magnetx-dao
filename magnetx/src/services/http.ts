@@ -4,9 +4,9 @@ import axios from 'axios';
 const baseURL =
   import.meta.env.VITE_API_URL
     ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
-    : (import.meta.env.MODE === 'production'
-        ? 'https://magnetx-backend.vercel.app'
-        : 'http://localhost:3001');
+  : (import.meta.env.MODE === 'production'
+    ? 'https://magnetx.onrender.com/api'
+    : 'http://localhost:3001');
 
 // Create axios instance
 const http = axios.create({
