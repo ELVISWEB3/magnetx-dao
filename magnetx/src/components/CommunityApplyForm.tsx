@@ -2,24 +2,24 @@ import React, { useEffect, useState } from 'react'
 import http from '../services/http'
 import '../App.css'
 
-interface OptionSet { [key: string]: string }
-
 export interface FormState {
   fullName: string
   xProfile: string
   region: string
   phone: string
   niche: string
+  otherNiche: string
   skills: string
   otherSkill: string
   category: string
+  otherCategory: string
   nominee1: string
   nominee2: string
   reason: string
 }
 
 const initialState: FormState = {
-  fullName: '', xProfile: '', region: '', phone: '', niche: '', skills: '', otherSkill: '', category: '', nominee1: '', nominee2: '', reason: ''
+  fullName: '', xProfile: '', region: '', phone: '', niche: '', otherNiche: '', skills: '', otherSkill: '', category: '', otherCategory: '', nominee1: '', nominee2: '', reason: ''
 }
 
 // Backend base is handled by services/http.ts via VITE_API_URL or sensible defaults
@@ -34,25 +34,22 @@ const CommunityApplyForm: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([])
 
   useEffect(() => {
-    const fallback = {
-      community: ['DeFi','Gaming','Infrastructure','NFT','SocialFi','AI','Education'],
-      skill: ['Solidity','Rust','Go','JavaScript','Design','Marketing','Product','Community'],
-      category: ['Builder','Founder','Engineer','Designer','Marketer']
-    }
-    async function load(endpoint: keyof typeof fallback, setter: (vals: string[]) => void) {
-      try {
-        const res = await http.get<OptionSet | string[]>(`/${endpoint}`)
-        const data = res.data
-        const values = Array.isArray(data) ? data : Object.values(data as OptionSet)
-        setter(values.length ? values : fallback[endpoint])
-      } catch (e) {
-        console.warn(`Using fallback for ${endpoint}`, e)
-        setter(fallback[endpoint])
-      }
-    }
-    load('community', setNiches)
-    load('skill', setSkills)
-    load('category', setCategories)
+    // Use the exact lists provided (no remote fetch)
+    const providedNiches = ['DeFi','NFT','Gaming','AI','Devs','Education','DeSci','DePins and RWA','Memes']
+    const providedCategories = ['Airdrops','Builders','Job hunting']
+    const providedSkills = [
+      'Developers',
+      'Trading',
+      'Degen',
+      'Strategists (Growth strategies, Project Managers, Project managers)',
+      'Marketing',
+      'Video  Editing',
+      'Graphics Designers',
+      'Communication'
+    ]
+    setNiches(providedNiches)
+    setCategories(providedCategories)
+    setSkills(providedSkills)
   }, [])
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -63,15 +60,30 @@ const CommunityApplyForm: React.FC = () => {
     update(name as keyof FormState, value as any)
   }
   function validate() {
-  const required: (keyof FormState)[] = ['fullName','xProfile','region','phone','niche','skills','category','reason','nominee1','nominee2']
-    return required.every(k => form[k]) && !(form.skills === 'Other' && !form.otherSkill)
+    const required: (keyof FormState)[] = ['fullName','xProfile','region','phone','niche','skills','category','reason','nominee1','nominee2']
+    const baseOk = required.every(k => form[k])
+    const skillsOk = !(form.skills === 'Other' && !form.otherSkill)
+    const nicheOk = !(form.niche === 'Other' && !form.otherNiche)
+    const catOk = !(form.category === 'Other' && !form.otherCategory)
+    return baseOk && skillsOk && nicheOk && catOk
   }
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) { alert('Please fill in all required fields.'); return }
     setLoading(true); setError(null)
     try {
-      const payload = { ...form, skills: form.skills === 'Other' ? form.otherSkill : form.skills }
+      const payload = {
+        fullName: form.fullName,
+        xProfile: form.xProfile,
+        region: form.region,
+        phone: form.phone,
+        niche: form.niche === 'Other' ? form.otherNiche : form.niche,
+        skills: form.skills === 'Other' ? form.otherSkill : form.skills,
+        category: form.category === 'Other' ? form.otherCategory : form.category,
+        nominee1: form.nominee1,
+        nominee2: form.nominee2,
+        reason: form.reason
+      }
       await http.post('/magnetx/community/apply', payload)
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -100,14 +112,20 @@ const CommunityApplyForm: React.FC = () => {
             <Field label="X profile Link" name="xProfile" value={form.xProfile} onChange={handleChange} placeholder="https://x.com/elizamarrk" required />
             <Field label="Region / Country" name="region" value={form.region} onChange={handleChange} placeholder="Lagos, Nigeria" required />
             <Field label="Phone (WhatsApp number)" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+234 801 234 5678" required />
-            <SelectField label="Your Web3 Niche" name="niche" value={form.niche} onChange={handleChange} placeholder="Choose a niche…" options={niches} required />
+            <SelectField label="Your Web3 Niche" name="niche" value={form.niche} onChange={handleChange} placeholder="Choose a niche…" options={[...niches, 'Other']} required />
+            {form.niche === 'Other' && (
+              <Field name="otherNiche" value={form.otherNiche} onChange={handleChange} placeholder="Enter your niche" required />
+            )}
             <div className="mx-field-group">
               <SelectField label="Your Skills" name="skills" value={form.skills} onChange={handleChange} placeholder="Choose a skill…" options={[...skills.filter(s=>s!=='Other'), 'Other']} required />
               {form.skills === 'Other' && (
                 <Field name="otherSkill" value={form.otherSkill} onChange={handleChange} placeholder="Enter your skill" required />
               )}
             </div>
-            <SelectField label="Category" name="category" value={form.category} onChange={handleChange} placeholder="Select a category…" options={categories} required />
+            <SelectField label="Category" name="category" value={form.category} onChange={handleChange} placeholder="Select a category…" options={[...categories, 'Other']} required />
+            {form.category === 'Other' && (
+              <Field name="otherCategory" value={form.otherCategory} onChange={handleChange} placeholder="Enter your category" required />
+            )}
             <div className="mx-field-group">
               <Field label="Nominate Friend #1 (X profile link)" name="nominee1" value={form.nominee1} onChange={handleChange} placeholder="https://x.com/friend1" required />
               <Field label="Nominate Friend #2 (X profile link)" name="nominee2" value={form.nominee2} onChange={handleChange} placeholder="https://x.com/friend2" required />
