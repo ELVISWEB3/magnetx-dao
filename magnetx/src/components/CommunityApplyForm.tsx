@@ -7,6 +7,7 @@ export interface FormState {
   xProfile: string
   region: string
   phone: string
+  nextOfKin: string
   niche: string
   otherNiche: string
   skills: string
@@ -19,7 +20,7 @@ export interface FormState {
 }
 
 const initialState: FormState = {
-  fullName: '', xProfile: '', region: '', phone: '', niche: '', otherNiche: '', skills: '', otherSkill: '', category: '', otherCategory: '', nominee1: '', nominee2: '', reason: ''
+  fullName: '', xProfile: '', region: '', phone: '', nextOfKin: '', niche: '', otherNiche: '', skills: '', otherSkill: '', category: '', otherCategory: '', nominee1: '', nominee2: '', reason: ''
 }
 
 // Backend base is handled by services/http.ts via VITE_API_URL or sensible defaults
@@ -60,7 +61,7 @@ const CommunityApplyForm: React.FC = () => {
     update(name as keyof FormState, value as any)
   }
   function validate() {
-    const required: (keyof FormState)[] = ['fullName','xProfile','region','phone','niche','skills','category','reason','nominee1','nominee2']
+    const required: (keyof FormState)[] = ['fullName','xProfile','region','phone','nextOfKin','niche','skills','category','reason','nominee1','nominee2']
     const baseOk = required.every(k => form[k])
     const skillsOk = !(form.skills === 'Other' && !form.otherSkill)
     const nicheOk = !(form.niche === 'Other' && !form.otherNiche)
@@ -77,6 +78,7 @@ const CommunityApplyForm: React.FC = () => {
         xProfile: form.xProfile,
         region: form.region,
         phone: form.phone,
+        nextOfKin: form.nextOfKin,
         niche: form.niche === 'Other' ? form.otherNiche : form.niche,
         skills: form.skills === 'Other' ? form.otherSkill : form.skills,
         category: form.category === 'Other' ? form.otherCategory : form.category,
@@ -112,6 +114,7 @@ const CommunityApplyForm: React.FC = () => {
             <Field label="X profile Link" name="xProfile" value={form.xProfile} onChange={handleChange} placeholder="https://x.com/elizamarrk" required />
             <Field label="Region / Country" name="region" value={form.region} onChange={handleChange} placeholder="Lagos, Nigeria" required />
             <Field label="Phone (WhatsApp number)" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+234 801 234 5678" required />
+            <Field label="Next of Kin number (WhatsApp)" name="nextOfKin" type="tel" value={form.nextOfKin} onChange={handleChange} placeholder="+234 801 234 5678" required />
             <SelectField label="Your Web3 Niche" name="niche" value={form.niche} onChange={handleChange} placeholder="Choose a niche…" options={[...niches, 'Other']} required />
             {form.niche === 'Other' && (
               <Field name="otherNiche" value={form.otherNiche} onChange={handleChange} placeholder="Enter your niche" required />
