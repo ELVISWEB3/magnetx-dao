@@ -8,6 +8,7 @@ export interface Submission {
   x_profile?: string
   region?: string
   phone?: string
+  next_of_kin?: string
   niche?: string
   skills?: string
   category?: string
@@ -278,6 +279,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
               {selected.x_profile && <DT label="X Profile" value={<a href={selected.x_profile} target="_blank" rel="noreferrer noopener">{selected.x_profile}</a>} />}
               {selected.region && <DT label="Region" value={selected.region} />}
               {selected.phone && <DT label="Phone" value={selected.phone} />}
+              {selected.next_of_kin && <DT label="Next of Kin" value={selected.next_of_kin} />}
               {selected.niche && <DT label="Niche" value={selected.niche} />}
               {selected.skills && <DT label="Skills" value={selected.skills} />}
               {selected.category && <DT label="Category" value={selected.category} />}
