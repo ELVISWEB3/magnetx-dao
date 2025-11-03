@@ -50,6 +50,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
   const [filterNiche, setFilterNiche] = useState<string>('')
   const [filterCategory, setFilterCategory] = useState<string>('')
   const [filterFollowers, setFilterFollowers] = useState<string>('') // 'low', 'medium', 'high'
+  const [filterSkills, setFilterSkills] = useState<string>('')
+  const [filterRegion, setFilterRegion] = useState<string>('')
+  const [filterName, setFilterName] = useState<string>('')
+  const [dateFrom, setDateFrom] = useState<string>('')
+  const [dateTo, setDateTo] = useState<string>('')
 
   useEffect(() => {
     fetchStats()
@@ -126,11 +131,32 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
     return null
   }, [submissions])
 
+  // Client-side filtering for fields not supported by backend query params
+  const filtered = useMemo(() => {
+    const normalize = (v?: string) => (v || '').toLowerCase()
+    const fromTs = dateFrom ? new Date(dateFrom + 'T00:00:00').getTime() : null
+    const toTs = dateTo ? new Date(dateTo + 'T23:59:59').getTime() : null
+    return submissions.filter(s => {
+      const nameOk = filterName ? normalize(s.full_name).includes(normalize(filterName)) : true
+      const skillsOk = filterSkills ? normalize(s.skills).includes(normalize(filterSkills)) : true
+      const regionOk = filterRegion ? normalize(s.region).includes(normalize(filterRegion)) : true
+      const createdTs = new Date(s.created_at).getTime()
+      const fromOk = fromTs !== null ? createdTs >= fromTs : true
+      const toOk = toTs !== null ? createdTs <= toTs : true
+      return nameOk && skillsOk && regionOk && fromOk && toOk
+    })
+  }, [submissions, filterName, filterSkills, filterRegion, dateFrom, dateTo])
+
   function resetFilters() {
     setSortBy('date-desc')
     setFilterNiche('')
     setFilterCategory('')
     setFilterFollowers('')
+    setFilterSkills('')
+    setFilterRegion('')
+    setFilterName('')
+    setDateFrom('')
+    setDateTo('')
     setPage(1)
   }
 
@@ -211,15 +237,53 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
               <option value="high">&gt; 10k</option>
             </select>
           </label>
+          <label style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+            Skills:
+            <input
+              type="text"
+              value={filterSkills}
+              onChange={e => { setFilterSkills(e.target.value); }}
+              placeholder="e.g. Solidity"
+              style={{ padding: '6px 10px', fontSize: 14, minWidth: 160 }}
+            />
+          </label>
+          <label style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+            Region:
+            <input
+              type="text"
+              value={filterRegion}
+              onChange={e => { setFilterRegion(e.target.value); }}
+              placeholder="e.g. Lagos"
+              style={{ padding: '6px 10px', fontSize: 14, minWidth: 160 }}
+            />
+          </label>
+          <label style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+            Name:
+            <input
+              type="text"
+              value={filterName}
+              onChange={e => { setFilterName(e.target.value); }}
+              placeholder="Search name"
+              style={{ padding: '6px 10px', fontSize: 14, minWidth: 160 }}
+            />
+          </label>
+          <label style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+            From:
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{ padding: '6px 10px', fontSize: 14 }} />
+          </label>
+          <label style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+            To:
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{ padding: '6px 10px', fontSize: 14 }} />
+          </label>
           <button type="button" className="btn btn-outline" onClick={resetFilters} style={{ padding: '6px 12px', fontSize: 14 }}>Reset</button>
         </div>
       </section>
 
       <section>
         <h2 style={{ margin: '32px 0 12px' }}>Submissions {loading && '(loading...)'}</h2>
-        {!loading && submissions.length === 0 && <p style={{ color: 'var(--text-muted)' }}>No submissions match your filters.</p>}
+        {!loading && filtered.length === 0 && <p style={{ color: 'var(--text-muted)' }}>No submissions match your filters.</p>}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {submissions.map(sub => (
+          {filtered.map(sub => (
             <button
               key={sub.id}
               onClick={() => openDetail(sub)}
